@@ -3,6 +3,7 @@ public abstract class Animal {
 
     private String nome;
     private int idade;
+    private Tutor tutor;
 
     public Animal(){
         
@@ -24,6 +25,14 @@ public abstract class Animal {
         this.idade = idade;
     }
 
-    public abstract void emitirSom();
+    public Tutor getTutor() {
+        return tutor;
+    }
+
+    public void setTutor(Tutor tutor) {
+        this.tutor = tutor;
+    }
+
+    public abstract String emitirSom();
 
 }

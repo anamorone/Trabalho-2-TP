@@ -5,7 +5,7 @@ public class Cachorro extends Animal{
     }
 
     @Override
-    public void emitirSom(){
-        System.out.println("Auau!!");
+    public String emitirSom(){
+        return "Auau!!";
     }
 }
