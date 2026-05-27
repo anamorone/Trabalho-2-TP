@@ -9,7 +9,6 @@ public class Tutor {
 
     public Tutor(){
 
-
     }
 
     public String getTelefone(){
@@ -36,7 +35,10 @@ public class Tutor {
         return animais;
     }
 
-
+    @Override
+    public String toString() {
+        return nome;
+    }
         
     
 }

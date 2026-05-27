@@ -1,3 +1,4 @@
+package model;
 public class Vacina {
 
     private String nome;
@@ -5,11 +6,6 @@ public class Vacina {
 
     public Vacina(){
 
-    }
-
-    public Vacina(String nome, String fabricante) {
-        this.nome = nome;
-        this.fabricante = fabricante;
     }
 
     public String getNome() { 
