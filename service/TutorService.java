@@ -13,7 +13,7 @@ public class TutorService {
         return tutores;
     }
 
-    public ArrayList buscarNomeTutor(String nome){
+    public ArrayList<Tutor> buscarNomeTutor(String nome){
         ArrayList<Tutor> resultado = new ArrayList<>();
 
         for(Tutor t : tutores){
