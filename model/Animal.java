@@ -35,4 +35,9 @@ public abstract class Animal {
 
     public abstract String emitirSom();
 
+    @Override
+    public String toString(){
+        return this.getNome();
+    }
+
 }

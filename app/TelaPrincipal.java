@@ -24,7 +24,7 @@ public class TelaPrincipal extends JFrame {
     private JComboBox<ServicoClinico> cbServicosConsulta;
 
     public TelaPrincipal() {
-        setTitle("VetClinic - Sistema de Gestão Hospitalar");
+        setTitle("VetBR");
         setSize(850, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -35,7 +35,7 @@ public class TelaPrincipal extends JFrame {
         abas.addTab("Tutores & Animais", criarPainelTutoresEAnimais());
         abas.addTab("Serviços Clínicos", criarPainelServicos());
         abas.addTab("Agendamento", criarPainelConsultas());
-        abas.addTab("Relatórios no Console", criarPainelRelatorios());
+        abas.addTab("Relatórios", criarPainelRelatorios());
 
         add(abas);
         atualizarComponentesGraficos();
@@ -48,23 +48,25 @@ public class TelaPrincipal extends JFrame {
         listaServicos.add(s1);
 
         Tutor t1 = new Tutor();
-        t1.setNome("Mariana Silva");
+        t1.setNome("Ana Morone");
         t1.setTelefone("99999-1111");
         tutorService.cadastrarTutor(t1);
 
-        Cachorro c1 = new Cachorro();
-        c1.setNome("Thor");
-        c1.setIdade(3);
-        c1.setTutor(t1);
-        animalService.cadastrarAnimal(c1);
+        Gato g1 = new Gato();
+        g1.setNome("Freddy");
+        g1.setIdade(3);
+        g1.setTutor(t1);
+        animalService.cadastrarAnimal(g1);
     }
 
     private JPanel criarPainelTutoresEAnimais() {
-        JPanel painel = new JPanel(new BorderLayout(10, 10));
-        JPanel pFormularios = new JPanel(new GridLayout(2, 1, 5, 5));
+        JPanel painel = new JPanel(new BorderLayout(15, 15));
+        painel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Formulário Tutor
-        JPanel pTutor = new JPanel(new GridLayout(3, 2, 5, 5));
+        JPanel painelEsquerdaContainer = new JPanel(new BorderLayout());
+        JPanel pFormularios = new JPanel(new GridLayout(2, 1, 10, 15));
+
+        JPanel pTutor = new JPanel(new GridLayout(3, 2, 5, 8));
         pTutor.setBorder(BorderFactory.createTitledBorder("Novo Tutor"));
         JTextField txtNomeTutor = new JTextField();
         JTextField txtTelTutor = new JTextField();
@@ -73,8 +75,7 @@ public class TelaPrincipal extends JFrame {
         pTutor.add(new JLabel("Telefone:")); pTutor.add(txtTelTutor);
         pTutor.add(new JLabel("")); pTutor.add(btnSalvarTutor);
 
-        // Formulário Animal
-        JPanel pAnimal = new JPanel(new GridLayout(5, 2, 5, 5));
+        JPanel pAnimal = new JPanel(new GridLayout(5, 2, 5, 8));
         pAnimal.setBorder(BorderFactory.createTitledBorder("Novo Animal"));
         cbTutoresAnimal = new JComboBox<>();
         JTextField txtNomeAnimal = new JTextField();
@@ -89,10 +90,11 @@ public class TelaPrincipal extends JFrame {
 
         pFormularios.add(pTutor);
         pFormularios.add(pAnimal);
-        painel.add(pFormularios, BorderLayout.WEST);
+        
+        painelEsquerdaContainer.add(pFormularios, BorderLayout.NORTH); 
+        painel.add(painelEsquerdaContainer, BorderLayout.WEST);
 
-        // Listagem e Filtro Central
-        JPanel pCentro = new JPanel(new BorderLayout(5, 5));
+        JPanel pCentro = new JPanel(new BorderLayout(10, 10));
         JPanel pBusca = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JTextField txtBusca = new JTextField(20);
         JButton btnBuscar = new JButton("Buscar");
@@ -104,14 +106,14 @@ public class TelaPrincipal extends JFrame {
         pCentro.add(new JScrollPane(tblTutores), BorderLayout.CENTER);
         painel.add(pCentro, BorderLayout.CENTER);
 
-        // Eventos dos botões baseados nos seus services
         btnSalvarTutor.addActionListener(e -> {
             if (!txtNomeTutor.getText().trim().isEmpty()) {
-                Tutor t = new Tutor();
-                t.setNome(txtNomeTutor.getText());
-                t.setTelefone(txtTelTutor.getText());
-                tutorService.cadastrarTutor(t);
-                txtNomeTutor.setText(""); txtTelTutor.setText("");
+                Tutor novoTutor = new Tutor();
+                novoTutor.setNome(txtNomeTutor.getText());
+                novoTutor.setTelefone(txtTelTutor.getText());
+                tutorService.cadastrarTutor(novoTutor);
+                txtNomeTutor.setText("");
+                txtTelTutor.setText("");
                 atualizarComponentesGraficos();
             }
         });
@@ -124,11 +126,11 @@ public class TelaPrincipal extends JFrame {
                     String esp = (String) cbEspecie.getSelectedItem();
                     Animal novoAnimal;
                     
-            if (esp.equals("Cachorro")) {
-                    novoAnimal = new Cachorro();
-                } else {
-                    novoAnimal = new Gato();
-                }
+                    if (esp.equals("Cachorro")) {
+                        novoAnimal = new Cachorro();
+                    } else {
+                        novoAnimal = new Gato();
+                    }
 
                     novoAnimal.setNome(txtNomeAnimal.getText());
                     novoAnimal.setIdade(idade);
@@ -239,7 +241,6 @@ public class TelaPrincipal extends JFrame {
             Animal a = (Animal) cbAnimaisConsulta.getSelectedItem();
             ServicoClinico s = (ServicoClinico) cbServicosConsulta.getSelectedItem();
             if (t != null && a != null && s != null) {
-                // Demonstração da chamada do método SOBRECARREGADO (Overloading) de serviço
                 consultaService.cadastrarConsulta(t, a, s, txtData.getText(), (String) cbStatus.getSelectedItem());
                 atualizarComponentesGraficos();
             }
@@ -248,31 +249,40 @@ public class TelaPrincipal extends JFrame {
         return painel;
     }
 
+    private void exibirPopUpRelatorio(String titulo, String conteudoTexto) {
+        JTextArea textArea = new JTextArea(conteudoTexto);
+        textArea.setEditable(false);
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 12)); 
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(650, 400));
+        JOptionPane.showMessageDialog(this, scrollPane, titulo, JOptionPane.INFORMATION_MESSAGE);
+    }
+
     private JPanel criarPainelRelatorios() {
         JPanel painel = new JPanel(new GridBagLayout());
         JPanel pBotoes = new JPanel(new GridLayout(2, 1, 15, 15));
         
-        JButton btnRelatorioGeral = new JButton("📋 Disparar Relatório Geral no Terminal");
-        JButton btnSonsAnimais = new JButton("🔊 Executar Teste de Sons (Polimorfismo) no Terminal");
+        JButton btnRelatorioGeral = new JButton("Gerar Relatório Geral na Tela");
+        JButton btnSonsAnimais = new JButton("Executar Teste de Sons");
         
         pBotoes.add(btnRelatorioGeral);
         pBotoes.add(btnSonsAnimais);
         painel.add(pBotoes);
 
-        // Ações chamando diretamente os println da sua classe RelatorioService
         btnRelatorioGeral.addActionListener(e -> {
-            relatorioService.gerarRelatorioGeral(consultaService.getConsultas());
+            String dadosRelatorio = relatorioService.gerarRelatorioGeral(consultaService.getConsultas());
+            exibirPopUpRelatorio("VetBR", dadosRelatorio);
         });
 
         btnSonsAnimais.addActionListener(e -> {
-            relatorioService.testarSonsDosAnimais(animalService.getAnimais());
+            String dadosSons = relatorioService.testarSonsDosAnimais(animalService.getAnimais());
+            exibirPopUpRelatorio("VetBR", dadosSons);
         });
 
         return painel;
     }
 
     private void atualizarComponentesGraficos() {
-        // Sincroniza tabelas e caixas de seleção de Tutores
         modelTutores.setRowCount(0);
         cbTutoresAnimal.removeAllItems();
         cbTutoresConsulta.removeAllItems();
@@ -282,7 +292,6 @@ public class TelaPrincipal extends JFrame {
             cbTutoresConsulta.addItem(t);
         }
 
-        // Sincroniza Procedimentos Clínicos
         modelServicos.setRowCount(0);
         cbServicosConsulta.removeAllItems();
         for (ServicoClinico s : listaServicos) {
@@ -290,7 +299,6 @@ public class TelaPrincipal extends JFrame {
             cbServicosConsulta.addItem(s);
         }
 
-        // Sincroniza Agendamentos
         modelConsultas.setRowCount(0);
         for (Consulta c : consultaService.getConsultas()) {
             modelConsultas.addRow(new Object[]{c.getTutor().getNome(), c.getAnimal().getNome(), c.getServico().getNome(), c.getData(), c.getStatus()});
