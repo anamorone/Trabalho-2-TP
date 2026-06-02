@@ -15,6 +15,7 @@ public class TelaPrincipal extends JFrame {
     private ArrayList<ServicoClinico> listaServicos = new ArrayList<>();
 
     private DefaultTableModel modelTutores;
+    private DefaultTableModel modelAnimais;
     private DefaultTableModel modelConsultas;
     private DefaultTableModel modelServicos;
 
@@ -94,16 +95,32 @@ public class TelaPrincipal extends JFrame {
         painelEsquerdaContainer.add(pFormularios, BorderLayout.NORTH); 
         painel.add(painelEsquerdaContainer, BorderLayout.WEST);
 
-        JPanel pCentro = new JPanel(new BorderLayout(10, 10));
-        JPanel pBusca = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JTextField txtBusca = new JTextField(20);
-        JButton btnBuscar = new JButton("Buscar");
-        pBusca.add(new JLabel("Filtrar por Nome (Tutor):")); pBusca.add(txtBusca); pBusca.add(btnBuscar);
-        pCentro.add(pBusca, BorderLayout.NORTH);
+        JPanel pCentro = new JPanel(new GridLayout(2, 1, 10, 10));
+
+        JPanel pCentroTutores = new JPanel(new BorderLayout(5, 5));
+        JPanel pBuscaTutor = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JTextField txtBuscaTutor = new JTextField(15);
+        JButton btnBuscarTutor = new JButton("Buscar Tutor");
+        pBuscaTutor.add(new JLabel("Filtrar Tutor:")); pBuscaTutor.add(txtBuscaTutor); pBuscaTutor.add(btnBuscarTutor);
+        pCentroTutores.add(pBuscaTutor, BorderLayout.NORTH);
 
         modelTutores = new DefaultTableModel(new Object[]{"Tutor", "Telefone", "Animais"}, 0);
         JTable tblTutores = new JTable(modelTutores);
-        pCentro.add(new JScrollPane(tblTutores), BorderLayout.CENTER);
+        pCentroTutores.add(new JScrollPane(tblTutores), BorderLayout.CENTER);
+
+        JPanel pCentroAnimais = new JPanel(new BorderLayout(5, 5));
+        JPanel pBuscaAnimal = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JTextField txtBuscaAnimal = new JTextField(15);
+        JButton btnBuscarAnimal = new JButton("Buscar Animal");
+        pBuscaAnimal.add(new JLabel("Filtrar Animal:")); pBuscaAnimal.add(txtBuscaAnimal); pBuscaAnimal.add(btnBuscarAnimal);
+        pCentroAnimais.add(pBuscaAnimal, BorderLayout.NORTH);
+
+        modelAnimais = new DefaultTableModel(new Object[]{"Nome", "Idade", "Espécie", "Tutor"}, 0);
+        JTable tblAnimais = new JTable(modelAnimais);
+        pCentroAnimais.add(new JScrollPane(tblAnimais), BorderLayout.CENTER);
+
+        pCentro.add(pCentroTutores);
+        pCentro.add(pCentroAnimais);
         painel.add(pCentro, BorderLayout.CENTER);
 
         btnSalvarTutor.addActionListener(e -> {
@@ -145,11 +162,19 @@ public class TelaPrincipal extends JFrame {
             }
         });
 
-        btnBuscar.addActionListener(e -> {
-            ArrayList<Tutor> filtrados = tutorService.buscarNomeTutor(txtBusca.getText());
+        btnBuscarTutor.addActionListener(e -> {
+            ArrayList<Tutor> filtrados = tutorService.buscarNomeTutor(txtBuscaTutor.getText());
             modelTutores.setRowCount(0);
             for (Tutor t : filtrados) {
                 modelTutores.addRow(new Object[]{t.getNome(), t.getTelefone(), t.getAnimais().toString()});
+            }
+        });
+
+        btnBuscarAnimal.addActionListener(e -> {
+            ArrayList<Animal> filtrados = animalService.buscarNomeAnimal(txtBuscaAnimal.getText());
+            modelAnimais.setRowCount(0);
+            for (Animal a : filtrados) {
+                modelAnimais.addRow(new Object[]{a.getNome(), a.getIdade(), a.getClass().getSimpleName(), a.getTutor().getNome()});
             }
         });
 
@@ -290,6 +315,11 @@ public class TelaPrincipal extends JFrame {
             modelTutores.addRow(new Object[]{t.getNome(), t.getTelefone(), t.getAnimais().toString()});
             cbTutoresAnimal.addItem(t);
             cbTutoresConsulta.addItem(t);
+        }
+
+        modelAnimais.setRowCount(0);
+        for (Animal a : animalService.getAnimais()) {
+            modelAnimais.addRow(new Object[]{a.getNome(), a.getIdade(), a.getClass().getSimpleName(), a.getTutor().getNome()});
         }
 
         modelServicos.setRowCount(0);
